@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Receiver</title>
+    <script src="/socket.io/socket.io.js"></script>
+</head>
+
+<body>
+    <p id="currentState">Current State: Front</p>
+    <button id="toggleButton">Front</button>
+    <div id="jaas-container" />
+
+    <button style="position: fixed;top: 10px;left: 10px;z-index: 9999;padding: 10px;" id="switchcamerabtn">
+        Switch Camera
+    </button>
+
+    <script src='https://meet.jit.si/external_api.js' async></script>
+    <style>
+        html,
+        body,
+        #jaas-container {
+            height: 100%;
+        }
+    </style>
+    <script type="text/javascript">
+        const socket = io();
+        window.onload = () => {
+            const api = new JitsiMeetExternalAPI("meet.jit.si", {
+                roomName: "vpaas-magic-cookie-d7b9cba3a39f4fe793a90064cc2da0a5/SampleAppTinyPicturesRecoverGreatly",
+                parentNode: document.querySelector('#jaas-container'),
+
+                // Make sure to include a JWT if you intend to record,
+                // make outbound calls or use any other premium features!
+                // jwt: "eyJraWQiOiJ2cGFhcy1tYWdpYy1jb29raWUtZDdiOWNiYTNhMzlmNGZlNzkzYTkwMDY0Y2MyZGEwYTUvYTYyZWVlLVNBTVBMRV9BUFAiLCJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJhdWQiOiJqaXRzaSIsImlzcyI6ImNoYXQiLCJpYXQiOjE3MjQ4NDQ5MDksImV4cCI6MTcyNDg1MjEwOSwibmJmIjoxNzI0ODQ0OTA0LCJzdWIiOiJ2cGFhcy1tYWdpYy1jb29raWUtZDdiOWNiYTNhMzlmNGZlNzkzYTkwMDY0Y2MyZGEwYTUiLCJjb250ZXh0Ijp7ImZlYXR1cmVzIjp7ImxpdmVzdHJlYW1pbmciOmZhbHNlLCJvdXRib3VuZC1jYWxsIjpmYWxzZSwic2lwLW91dGJvdW5kLWNhbGwiOmZhbHNlLCJ0cmFuc2NyaXB0aW9uIjpmYWxzZSwicmVjb3JkaW5nIjpmYWxzZX0sInVzZXIiOnsiaGlkZGVuLWZyb20tcmVjb3JkZXIiOmZhbHNlLCJtb2RlcmF0b3IiOnRydWUsIm5hbWUiOiJUZXN0IFVzZXIiLCJpZCI6ImF1dGgwfDY2Y2YwYWJlMjZkYzI1N2I1YjMzNTQ0ZSIsImF2YXRhciI6IiIsImVtYWlsIjoidGVzdC51c2VyQGNvbXBhbnkuY29tIn19LCJyb29tIjoiKiJ9.WlV_A0sigf9OWR3lnI3iyKWTAYYIMND60GWKXS_EDQhJpN4QSL2MhWJ5V6klxtrf_4uznSY6imQ9wg-L0U-24q0bzP_hH8SJnPYqwrTpCPzg081ycpy5F1unjt6AVkp-BEXf2Ir6DjIEBNiAo2VJ4c03WNmvN0omnUIRjp4P91D00Mhk_VoyIG-1X9Q4A-Dz83jtLW3Jk__8BWkiIfgRBHNyLGlByJdBbOyrjQvwv-Ai8l3NJRXTse0NDcdjCX9C5KseM12Mp769u8f0ooJ6Qt4K-nRncAOInn8wCKB8VrHeEuuUH3KYaTG8DkLIdqr5PVYNAzexbVPr7iMK0i67MQ"
+            });
+
+            api?.addEventListener(
+                "videoConferenceJoined",
+                function (event) {
+                    console.log("videoConferenceJoined")
+                    api.executeCommand('toggleCamera', 'facingMode');
+                    // api.executeCommand('toggleCamera');
+                }
+            )
+
+            socket.on('update', (state) => {
+                console.log({ state })
+                api.executeCommand('toggleCamera', 'facingMode');
+            });
+
+            const btn = document.getElementById('switchcamerabtn')
+            btn?.addEventListener('click', () => {
+                console.log("Switched")
+                api.executeCommand('toggleCamera', 'facingMode');
+            })
+            // api.executeCommand('toggleCamera', 'facingMode');
+            // api.executeCommand('toggleCamera', 'environment');
+        }
+    </script>
+</body>
+
+</html>
